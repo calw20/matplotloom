@@ -1,6 +1,7 @@
 import subprocess
 import shutil
 import warnings
+from multiprocessing import current_process
 
 from .loom import Loom, DEFAULT_FFMPEG_PATH
 
@@ -27,7 +28,7 @@ def _check_ffmpeg_availability():
         return False
 
 
-if not _check_ffmpeg_availability():
+if not _check_ffmpeg_availability() and current_process().name == 'MainProcess':
     warnings.warn(
         "ffmpeg is not available on your system. "
         "matplotloom requires ffmpeg to create animations. "
