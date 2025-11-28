@@ -102,6 +102,7 @@ class Loom:
                 f"got {odd_dimension_handling}"
             )
         self.odd_dimension_handling: str = odd_dimension_handling
+        self._get_scale_filter() # Should throw value error if wrong
 
         if self.output_filepath.exists() and not self.overwrite:
             raise FileExistsError(
@@ -255,6 +256,8 @@ class Loom:
             return "crop='if(mod(iw,2),iw-1,iw)':'if(mod(ih,2),ih-1,ih)':0:0"
         elif self.odd_dimension_handling == "pad":
             return "pad='if(mod(iw,2),iw+1,iw)':'if(mod(ih,2),ih+1,ih)':0:0:color=white"
+        else:
+            raise ValueError("Scale Settings Incorrect!")
 
     def save_video(self) -> None:
         """
