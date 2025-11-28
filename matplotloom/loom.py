@@ -216,6 +216,8 @@ class Loom:
         if self.parallel and frame_number is None:
             raise ValueError("frame_number must be provided when parallel=True")
 
+        assert self.frame_counter is not None
+
         if not self.parallel:
             frame_filepath = self.frames_directory / f"frame_{self.frame_counter:06d}.png"
             self.frame_counter += 1
