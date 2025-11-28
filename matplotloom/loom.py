@@ -12,6 +12,8 @@ from IPython.display import Video, Image
 
 DEFAULT_FFMPEG_PATH = plt.rcParams['animation.ffmpeg_path']
 
+ACCEPTABLE_EXTENSIONS = ("mp4", "gif")
+
 class Loom:
     """
     A class for creating animations from matplotlib figures.
@@ -134,6 +136,11 @@ class Loom:
         if self.verbose:
             print(f"output_filepath: {self.output_filepath}")
             print(f"frames_directory: {self.frames_directory}")
+
+        if self.file_format not in ACCEPTABLE_EXTENSIONS:
+            raise ValueError("File Extension not Valid! "
+                             f"Must be one of: {ACCEPTABLE_EXTENSIONS}"
+                             )
 
     def __enter__(self) -> 'Loom':
         """
@@ -290,6 +297,8 @@ class Loom:
                 gif_filter = "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
 
             command.extend(["-vf", gif_filter, str(self.output_filepath)])
+        else:
+            raise ValueError("Export File Format Not Valid!")
 
         PIPE = subprocess.PIPE
         process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
