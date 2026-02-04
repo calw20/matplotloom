@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 
 from IPython.display import Video, Image
 
-DEFAULT_FFMPEG_PATH = plt.rcParams['animation.ffmpeg_path']
+DEFAULT_FFMPEG_PATH: str = plt.rcParams['animation.ffmpeg_path']
 
 ACCEPTABLE_EXTENSIONS = ("mp4", "gif")
 
