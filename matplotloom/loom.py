@@ -1,4 +1,4 @@
-import subprocess
+import subprocess, os
 import warnings
 
 from pathlib import Path
@@ -11,7 +11,15 @@ from matplotlib.figure import Figure
 
 from IPython.display import Video, Image
 
-DEFAULT_FFMPEG_PATH: str = plt.rcParams['animation.ffmpeg_path']
+
+# This should allow 
+_LOOM_DEFAULT_ENVIRON_VAR = "LOOM_FFMPEG_PATH"
+
+if _LOOM_DEFAULT_ENVIRON_VAR in os.environ:
+    DEFAULT_FFMPEG_PATH = os.environ[_LOOM_DEFAULT_ENVIRON_VAR]
+else:
+    DEFAULT_FFMPEG_PATH: str = plt.rcParams['animation.ffmpeg_path']
+    os.environ[_LOOM_DEFAULT_ENVIRON_VAR] = DEFAULT_FFMPEG_PATH
 
 ACCEPTABLE_EXTENSIONS = ("mp4", "gif")
 
