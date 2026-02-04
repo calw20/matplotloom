@@ -33,7 +33,7 @@ if not _check_ffmpeg_availability() and current_process().name == 'MainProcess':
         "ffmpeg is not available on your system. "
         "matplotloom requires ffmpeg to create animations. "
         "Please install ffmpeg to use this library. "
-        "Visit https://ffmpeg.org/download.html for installation instructions."
+        "Visit https://ffmpeg.org/download.html for installation instructions. "
         "Or configure `matplotlib.pyplot.rcParams['animation.ffmpeg_path']` to "
         "point to an ffmpeg executable. The current command used to run ffmpeg "
         f"is `{DEFAULT_FFMPEG_PATH}`",
