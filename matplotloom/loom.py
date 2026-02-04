@@ -1,4 +1,5 @@
 import subprocess
+import warnings
 
 from pathlib import Path
 from typing import Union, Optional, Dict, Type, List, Any
@@ -85,6 +86,7 @@ class Loom:
         verbose: bool = False,
         show_ffmpeg_output: bool = False,
         ffmpeg_path: Optional[Union[Path, str]] = None,
+        enable_ffmpeg_path_fallback: bool = True,
     ) -> None:
         self.output_filepath: Path = Path(output_filepath)
         self.fps: int = fps
@@ -94,6 +96,7 @@ class Loom:
         self.parallel: bool = parallel
         self.show_ffmpeg_output: bool = show_ffmpeg_output
         self.savefig_kwargs: Dict[str, Any] = savefig_kwargs or {}
+        self.enable_ffmpeg_path_fallback = enable_ffmpeg_path_fallback
        
         valid_odd_options = {"round_up", "round_down", "crop", "pad", "none"}
         if odd_dimension_handling not in valid_odd_options:
@@ -117,12 +120,37 @@ class Loom:
         else:
             self.frames_directory = Path(frames_directory)
         
-        # Use matplotlib ffmpeg
-        self.ffmpeg_path: str = DEFAULT_FFMPEG_PATH
+        # Allow providing of ffmpeg path to class instance
+        self.ffmpeg_path: str | None = None
         if ffmpeg_path is not None:
             _ffmpeg_path = Path(ffmpeg_path)
+
+            # If the path exists use it
             if _ffmpeg_path.exists():
+                # Store the absolute path as things can get a bit funky with
+                # path enrolment & multiprocessing.
                 self.ffmpeg_path = str(_ffmpeg_path.absolute())
+
+            else:
+                # Otherwise check if path fallback is enabled & warn the user
+                if self.enable_ffmpeg_path_fallback: 
+                    warnings.warn(
+                        f"Provided ffmpeg path of `{ffmpeg_path}` (resolving " +
+                        f"to `{_ffmpeg_path}`) was not found! Using default " +
+                        f"path of `{DEFAULT_FFMPEG_PATH}`"
+                    )
+                    
+                    self.ffmpeg_path = DEFAULT_FFMPEG_PATH
+
+                # If path fallback is not enabled, raise an error
+                else:
+                    raise FileNotFoundError(
+                        f"Provided ffmpeg path of `{ffmpeg_path}` (resolving " +
+                        f"to `{_ffmpeg_path}`) was not found!"
+                    )
+
+        # In theory this should never fail.
+        assert isinstance(self.ffmpeg_path, str), "ffmpeg path is not a string?"
 
         # We don't use the frame counter in parallel mode.
         self.frame_counter: Optional[int] = 0 if not self.parallel else None
