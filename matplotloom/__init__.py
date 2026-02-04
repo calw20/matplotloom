@@ -38,7 +38,7 @@ if not _check_ffmpeg_availability() and current_process().name == 'MainProcess':
         " is set to a valid ffmpeg executable or configure "
         "`matplotlib.pyplot.rcParams['animation.ffmpeg_path']` to point to an "
         "ffmpeg executable. The current command used to run ffmpeg "
-        f"is `{DEFAULT_FFMPEG_PATH}`",
+        f"is: `{DEFAULT_FFMPEG_PATH}`",
         UserWarning,
         stacklevel=2
     )
