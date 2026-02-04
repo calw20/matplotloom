@@ -129,7 +129,9 @@ class Loom:
             self.frames_directory = Path(frames_directory)
         
         # Allow providing of ffmpeg path to class instance
-        self.ffmpeg_path: str | None = None
+        self.ffmpeg_path: str = DEFAULT_FFMPEG_PATH
+
+        # Only throws an error if a path was provided
         if ffmpeg_path is not None:
             _ffmpeg_path = Path(ffmpeg_path)
 
@@ -148,15 +150,13 @@ class Loom:
                         f"path of `{DEFAULT_FFMPEG_PATH}`"
                     )
                     
-                    self.ffmpeg_path = DEFAULT_FFMPEG_PATH
-
                 # If path fallback is not enabled, raise an error
                 else:
                     raise FileNotFoundError(
                         f"Provided ffmpeg path of `{ffmpeg_path}` (resolving " +
                         f"to `{_ffmpeg_path}`) was not found!"
-                    )
-
+                    )            
+                
         # In theory this should never fail.
         assert isinstance(self.ffmpeg_path, str), "ffmpeg path is not a string?"
 
