@@ -3,21 +3,6 @@ import matplotlib.pyplot as plt
 
 from joblib import Parallel, delayed
 
-# Either the environ var OR matplotlib rcPram *needs* to be set BEFORE
-#  importing matplotloom
-import imageio_ffmpeg # python library that provides ffmpeg binary 
-FFMPEG_PATH: str = imageio_ffmpeg.get_ffmpeg_exe()
-
-# Configure matplotlib rcPrams, if your global / project rcPrams file
-#  already sets this then you don't need to overload it. 
-plt.rcParams['animation.ffmpeg_path'] = FFMPEG_PATH
-
-# Alternatively could set the environment variable however this *does not*
-#  inform matplotlib there is a valid ffmpeg binary so should be avoided.
-#  The intention is to allow any more complex toolchains the option if needed.
-# import os
-#os.environ["LOOM_FFMPEG_PATH"] = FFMPEG_PATH
-
 from matplotloom import Loom
 
 def plot_frame(phase, frame_number, loom):
