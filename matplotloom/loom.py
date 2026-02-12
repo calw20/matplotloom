@@ -128,7 +128,7 @@ class Loom:
             self.frames_directory = Path(frames_directory)
         
         # Allow providing of ffmpeg path to class instance
-        self.ffmpeg_path: str = DEFAULT_FFMPEG_PATH
+        self.ffmpeg_path: Path = Path(DEFAULT_FFMPEG_PATH)
 
         # Only throws an error if a path was provided
         if ffmpeg_path is not None:
@@ -138,7 +138,7 @@ class Loom:
             if _ffmpeg_path.exists():
                 # Store the absolute path as things can get a bit funky with
                 # path enrolment & multiprocessing.
-                self.ffmpeg_path = str(_ffmpeg_path.absolute())
+                self.ffmpeg_path = _ffmpeg_path.absolute()
 
             else:
                 # Otherwise check if path fallback is enabled & warn the user
@@ -157,7 +157,7 @@ class Loom:
                     )            
                 
         # In theory this should never fail.
-        assert isinstance(self.ffmpeg_path, str), "ffmpeg path is not a string?"
+        assert isinstance(self.ffmpeg_path, Path), "ffmpeg path is not a string?"
 
         # We don't use the frame counter in parallel mode.
         self.frame_counter: Optional[int] = 0 if not self.parallel else None
