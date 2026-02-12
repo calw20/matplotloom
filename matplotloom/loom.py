@@ -2,7 +2,7 @@ import subprocess, os
 import warnings
 
 from pathlib import Path
-from typing import Union, Optional, Dict, Type, List, Any
+from typing import Literal, Union, Optional, Dict, Type, List, Any
 from types import TracebackType
 from tempfile import TemporaryDirectory
 
@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 from IPython.display import Video, Image
-
 
 # This should allow 
 _LOOM_DEFAULT_ENVIRON_VAR = "LOOM_FFMPEG_PATH"
@@ -21,6 +20,7 @@ else:
     DEFAULT_FFMPEG_PATH: str = plt.rcParams['animation.ffmpeg_path']
     os.environ[_LOOM_DEFAULT_ENVIRON_VAR] = DEFAULT_FFMPEG_PATH
 
+VALID_SCALE_ODD_OPTIONS = {"round_up", "round_down", "crop", "pad", "none"}
 
 class Loom:
     """
@@ -105,10 +105,9 @@ class Loom:
         self.savefig_kwargs: Dict[str, Any] = savefig_kwargs or {}
         self.enable_ffmpeg_path_fallback = enable_ffmpeg_path_fallback
        
-        valid_odd_options = {"round_up", "round_down", "crop", "pad", "none"}
-        if odd_dimension_handling not in valid_odd_options:
+        if odd_dimension_handling not in VALID_SCALE_ODD_OPTIONS:
             raise ValueError(
-                f"odd_dimension_handling must be one of {valid_odd_options}, "
+                f"odd_dimension_handling must be one of {VALID_SCALE_ODD_OPTIONS}, "
                 f"got {odd_dimension_handling}"
             )
         self.odd_dimension_handling: str = odd_dimension_handling
@@ -157,7 +156,7 @@ class Loom:
                     )            
                 
         # In theory this should never fail.
-        assert isinstance(self.ffmpeg_path, Path), "ffmpeg path is not a string?"
+        assert isinstance(self.ffmpeg_path, Path), "ffmpeg path is not a valid Path object?"
 
         # We don't use the frame counter in parallel mode.
         self.frame_counter: Optional[int] = 0 if not self.parallel else None
@@ -288,7 +287,8 @@ class Loom:
         elif self.odd_dimension_handling == "pad":
             return "pad='if(mod(iw,2),iw+1,iw)':'if(mod(ih,2),ih+1,ih)':0:0:color=white"
         else:
-            raise ValueError("Scale Settings Incorrect!")
+            raise ValueError(f"Scale Settings not one of `{VALID_SCALE_ODD_OPTIONS}`, " +
+                             f"got `{self.odd_dimension_handling}`")
 
     def save_video(self) -> None:
         """
@@ -303,7 +303,7 @@ class Loom:
 
         if self.file_format == "mp4":
             command = [
-                self.ffmpeg_path,
+                str(self.ffmpeg_path),
                 "-y",
                 "-framerate", str(self.fps),
                 "-i", str(self.frames_directory / "frame_%06d.png"),
@@ -319,7 +319,7 @@ class Loom:
             ])
         elif self.file_format == "gif":
             command = [
-                self.ffmpeg_path,
+                str(self.ffmpeg_path),
                 "-y",
                 "-framerate", str(self.fps),
                 "-f", "image2",
