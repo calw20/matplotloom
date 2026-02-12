@@ -21,7 +21,6 @@ else:
     DEFAULT_FFMPEG_PATH: str = plt.rcParams['animation.ffmpeg_path']
     os.environ[_LOOM_DEFAULT_ENVIRON_VAR] = DEFAULT_FFMPEG_PATH
 
-ACCEPTABLE_EXTENSIONS = ("mp4", "gif")
 
 class Loom:
     """
@@ -174,10 +173,6 @@ class Loom:
             print(f"output_filepath: {self.output_filepath}")
             print(f"frames_directory: {self.frames_directory}")
 
-        if self.file_format not in ACCEPTABLE_EXTENSIONS:
-            raise ValueError("File Extension not Valid! "
-                             f"Must be one of: {ACCEPTABLE_EXTENSIONS}"
-                             )
 
     def __enter__(self) -> 'Loom':
         """
